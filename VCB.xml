@@ -1,0 +1,3571 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+  ..\..\..\FrameXML\UI.xsd">
+	
+	---------------------------------LACALIZATION----------------------------------------------------------------
+	<Script file="Interface\AddOns\VCB\localization\enUS.lua" />
+	<Script file="Interface\AddOns\VCB\localization\deDE.lua" />
+	<Script file="Interface\AddOns\VCB\localization\koKR.lua" />
+	
+	---------------------------------GENERAL FRAMES----------------------------------------------------------------
+	<GameTooltip name="VCB_Tooltip" frameStrata="TOOLTIP" hidden="false" parent="UIParent" inherits="GameTooltipTemplate">
+		<Scripts>
+			<Onload>
+				this:SetOwner(WorldFrame, "ANCHOR_NONE")
+			</Onload>
+	   </Scripts>
+	</GameTooltip>
+	
+	<CheckButton name="VCB_BF_CheckTemplate" inherits="OptionsCheckButtonTemplate" virtual="true">
+		<HitRectInsets>
+			<AbsInset left="0" right="0" top="0" bottom="0"/>
+		</HitRectInsets>
+	</CheckButton>
+	
+	<Button name = "VCB_CONSOLIDATED_BUFFS_ENTRY_TEMPLATE" virtual="true">
+		<Size x="350" y="40" />
+		<Scripts>
+			<OnClick>
+				VCB_CONSOLIDATED_SCROLLFRAME_ENTRY(this)
+			</OnClick>
+		</Scripts>
+		<NormalFont style="GameFontHighlightLeft" />
+		<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+		<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+		<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+	</Button>
+	
+	<Button name = "VCB_PM_FRAME_ENTRY_TEMPLATE" virtual="true">
+		<Size x="250" y="40" />
+		<Scripts>
+			<OnClick>
+				VCB_PM_SCROLLFRAME_ENTRY(this)
+			</OnClick>
+		</Scripts>
+		<NormalFont style="GameFontHighlightLeft" />
+		<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+		<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+		<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+	</Button>
+	
+	<Button name = "VCB_BANNED_BUFFS_ENTRY_TEMPLATE" virtual="true">
+		<Size x="350" y="40" />
+		<Scripts>
+			<OnClick>
+				VCB_BANNED_SCROLLFRAME_ENTRY(this)
+			</OnClick>
+		</Scripts>
+		<NormalFont style="GameFontHighlightLeft" />
+		<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+		<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+		<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+	</Button>
+	
+	<Slider name="VCB_BF_SliderTemplate" inherits="OptionsSliderTemplate" virtual="true">
+		<Scripts>
+			<OnEnter>
+				if (this.aide) then
+					GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+					GameTooltip:SetText(this.aide, nil, nil, nil, nil, 1)
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+	</Slider>
+	
+	---------------------------------MINIMAP FRAME----------------------------------------------------------------
+	<Button name="VCB_BF_MINIMAP_FRAME" movable="true" parent="UIParent" enableMouse="true" toplevel="true" frameStrata="LOW">
+		<Size x="33" y="33" />
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="Minimap" relativePoint="LEFT">
+				<Offset x="0" y="0" />
+			</Anchor>
+        </Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="ItemRack_IconFrame_Icon" file="Interface\AddOns\VCB\images\icon">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="7" y="-6" />
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.075" right="0.925" top="0.075" bottom="0.925" />
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture file="Interface\Minimap\MiniMap-TrackingBorder">
+					<Size x="56" y="56" />
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
+		<Scripts>
+			<OnLoad>
+				this:RegisterForClicks("LeftButtonUp","RightButtonUp")
+				this:RegisterForDrag("LeftButton")
+				this:SetClampedToScreen(true)
+			</OnLoad>
+			<OnDragStart>
+				this:LockHighlight()
+				this:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				this:UnlockHighlight()
+				this:StopMovingOrSizing()
+			</OnDragStop>
+			<OnEnter>
+				GameTooltip:SetOwner(this, "ANCHOR_LEFT")
+				GameTooltip:AddLine(VCB_MINIMAP_TOOLTIP_NAME)
+				GameTooltip:AddLine(VCB_MINIMAP_TOOLTIP_LEFTCLICK, 0.5, 0.5, 0.5)
+				GameTooltip:AddLine(VCB_MINIMAP_TOOLTIP_RIGHTCLICK, 0.5, 0.5, 0.5)
+				GameTooltip:AddLine(VCB_MINIMAP_TOOLTIP_DRAG, 0.5, 0.5, 0.5)
+				GameTooltip:Show()
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+			<OnClick>
+				VCB_BF_MINIMAP_OnClick(arg1)
+			</OnClick>
+		</Scripts>
+	</Button>
+	
+	---------------------------------MAIN CONFIG FRAME----------------------------------------------------------------
+	<Frame name="VCB_BF_ConfigFrame" movable="true" parent="UIParent" frameStrata="HIGH" hidden="true" enableMouse="true" enableKeyboard="true">
+    <Size x="690" y="445" />
+		<Anchors>
+      <Anchor point="CENTER" relativeTo="UIParent">
+        <Offset x="0" y="50" />
+      </Anchor>
+    </Anchors>
+
+		-- Border of the main frame
+		<!--<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">-->
+    <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+      <BackgroundInsets>
+        <AbsInset left="5" right="5" top="5" bottom="5" />
+      </BackgroundInsets>
+      <TileSize>
+        <AbsValue val="32" />
+      </TileSize>
+      <EdgeSize>
+        <AbsValue val="16" />
+      </EdgeSize>
+    </Backdrop>
+		<Scripts>
+			<OnMouseDown>
+				this:StartMoving()
+			</OnMouseDown>
+			<OnMouseUp>
+				this:StopMovingOrSizing()
+			</OnMouseUp>
+			<OnShow>
+				VCB_BF_DummyConfigMode_Enable()
+				PlaySound("igCharacterInfoOpen")
+			</OnShow>
+			<OnHide>
+				VCB_BF_DummyConfigMode_Disable()
+				PlaySound("igCharacterInfoClose")
+			</OnHide>
+			<OnEvent>
+				VCB_OnEvent(event)
+			</OnEvent>
+			<OnLoad>
+				VCB_OnLoad()
+				this:SetClampedToScreen(true)
+				getglobal("VCB_BF_Header"):SetText(VCB_MAIN_NAME.." "..VCB_MAIN_VERSION)
+			</OnLoad>
+		</Scripts>
+
+		-- Title block
+		<Layers>
+		  <Layer>
+			<Texture name="VCB_BF_Header_Block" file="Interface\DialogFrame\UI-DialogBox-Header">
+        <Size x="285" y="32" />
+        <Anchors>
+          <Anchor point="TOP">
+  	      <Offset x="60" y="12" />
+        </Anchor>
+			  </Anchors>
+        <TexCoords left="0.2" right="0.8" top="0" bottom="0.6" />
+	    </Texture>
+			-- Title text		
+			<FontString name="VCB_BF_Header" inherits="GameFontNormalSmall" text="Vanilla Consolidated Buff-Frames v2.5">
+		      <Size x="285" y="0" />
+		      <Anchors>
+			    <Anchor point="center" relativeTo="VCB_BF_Header_Block" relativePoint="center">
+				  <Offset x="0" y="0" />
+		        </Anchor>
+			  </Anchors>
+	        </FontString>
+	      </Layer>
+		</Layers>
+
+		<Frames>
+			-- Close button
+			<Button name="VCB_BF_CloseButton">
+				<Size x="30" y="30" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="VCB_BF_ConfigFrame" relativePoint="TOPRIGHT">
+						<Offset x="-8" y="-8" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						getglobal("VCB_BF_ConfigFrame"):Hide()
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(VCB_TOP_BUTTON_CLOSE, nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up" />
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down" />
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD" />
+			</Button>
+
+			-- Lock button
+			<Button name="VCB_BF_LockButton">
+				<Size x="20" y="20" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="VCB_BF_CloseButton" relativePoint="LEFT">
+						<Offset x="5" y="1" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VCB_BF_ToggleLock()
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(VCB_TOP_BUTTON_LOCK, nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Pass-Down" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD" />
+			</Button>
+
+			-- Minimap Button
+			<Button name="VCB_BF_MiniMapButton">
+				<Size x="20" y="20" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="VCB_BF_LockButton" relativePoint="LEFT">
+						<Offset x="0" y="-1" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if VCB_BF_MINIMAP_FRAME:IsVisible() then
+							VCB_BF_MINIMAP_FRAME:Hide()
+							VCB_MM_ICON = true
+						else
+							VCB_BF_MINIMAP_FRAME:Show()
+							VCB_MM_ICON = false
+						end
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(VCB_TOP_BUTTON_MINIMAP, nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD" />
+			</Button>
+
+			-- Dummy Button
+			<Button name="VCB_BF_DummyButton">
+				<Size x="20" y="20" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="VCB_BF_MiniMapButton" relativePoint="LEFT">
+						<Offset x="0" y="-2" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if VCB_BF_DUMMY_MODE then
+							VCB_BF_DummyConfigMode_Disable()
+						else
+
+							VCB_BF_DummyConfigMode_Enable()
+						end
+						PlaySound("igMainMenuOptionCheckBoxOff")
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+						GameTooltip:SetText(VCB_TOP_BUTTON_DUMMY, nil, nil, nil, nil, 1)
+						GameTooltip:Show()
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Coin-Up" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Coin-Down" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Coin-Highlight" alphaMode="ADD" />
+			</Button>
+
+			-- Menu Head
+			<Frame name="VCB_BF_MENU_HEAD">
+        <Size x="160" y="40" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+						<Offset x="10" y="-10" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="11" right="12" top="12" bottom="11" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="32" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="16" />
+					</EdgeSize>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						getglobal("VCB_BF_MENU_HEAD_TITLE"):SetText(VCB_MENU_HEAD)
+					</OnLoad>
+				</Scripts>
+				<Layers>
+					<Layer>
+						-- Menu Head title
+						<FontString name="$parent_TITLE" inherits="GameFontNormalLarge" text="MENU">
+							<Size x="160" y="60" />
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset x="0" y="0" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			-- Menu Body
+			<Frame name="VCB_BF_MENU_BODY">
+        <Size x="160" y="380" />
+				<Anchors>
+					<Anchor point="TOP" relativeTo="VCB_BF_MENU_HEAD" relativePoint="BOTTOM">
+						<Offset x="0" y="-2" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="11" right="12" top="12" bottom="11" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="32" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="16" />
+					</EdgeSize>
+				</Backdrop>
+				<Frames>
+					-- Button 5
+					<Button name="VCB_BF_MENU_BUTTON5">
+						<Size x="130" y="35" />
+						<Anchors>
+							<Anchor point="TOP">
+								<Offset x="0" y="-10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VCB_OPTIONS_HIDE_ALL()
+								VCB_OPTIONS_SHOW("VCB_BF_BF_FRAME", VCB_MENU_BUTTON5_LINK)
+							</OnClick>
+							<OnLoad>
+								getglobal(this:GetName().."_TITLE"):SetText(VCB_MENU_BUTTON5_NAME)
+							</OnLoad>
+						</Scripts>
+						<Layers>
+							<Layer>
+								-- Button Title
+								<FontString name="$parent_TITLE" inherits="GameFontNormalSmall" text="Buff Frame">
+									<Size x="130" y="40" />
+									<Anchors>
+										<Anchor point="CENTER">
+											<Offset x="0" y="7" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+						<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+						<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+					</Button>
+
+					-- Button 6
+					<Button name="VCB_BF_MENU_BUTTON6">
+						<Size x="130" y="40" />
+						<Anchors>
+							<Anchor point="TOP" relativeTo="VCB_BF_MENU_BUTTON5" relativePoint="BOTTOM">
+								<Offset x="0" y="10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VCB_OPTIONS_HIDE_ALL()
+								VCB_OPTIONS_SHOW("VCB_BF_DBF_FRAME", VCB_MENU_BUTTON6_LINK)
+							</OnClick>
+							<OnLoad>
+								getglobal(this:GetName().."_TITLE"):SetText(VCB_MENU_BUTTON6_NAME)
+							</OnLoad>
+						</Scripts>
+						<Layers>
+							<Layer>
+								-- Button Title
+								<FontString name="$parent_TITLE" inherits="GameFontNormalSmall" text="Debuff Frame">
+									<Size x="130" y="40" />
+									<Anchors>
+										<Anchor point="CENTER">
+											<Offset x="0" y="7" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+						<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+						<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+					</Button>
+
+					-- Button 7
+					<Button name="VCB_BF_MENU_BUTTON7">
+						<Size x="130" y="40" />
+						<Anchors>
+							<Anchor point="TOP" relativeTo="VCB_BF_MENU_BUTTON6" relativePoint="BOTTOM">
+								<Offset x="0" y="10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VCB_OPTIONS_HIDE_ALL()
+								VCB_OPTIONS_SHOW("VCB_BF_WP_FRAME", VCB_MENU_BUTTON7_LINK)
+							</OnClick>
+							<OnLoad>
+								getglobal(this:GetName().."_TITLE"):SetText(VCB_MENU_BUTTON7_NAME)
+							</OnLoad>
+						</Scripts>
+						<Layers>
+							<Layer>
+								-- Button Title
+								<FontString name="$parent_TITLE" inherits="GameFontNormalSmall" text="Weapon Frame">
+									<Size x="130" y="40" />
+									<Anchors>
+										<Anchor point="CENTER">
+											<Offset x="0" y="7" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+						<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+						<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+					</Button>
+
+					-- Button8
+					<Button name="VCB_BF_MENU_BUTTON8">
+						<Size x="130" y="40" />
+						<Anchors>
+							<Anchor point="TOP" relativeTo="VCB_BF_MENU_BUTTON7" relativePoint="BOTTOM">
+								<Offset x="0" y="10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VCB_OPTIONS_HIDE_ALL()
+								VCB_OPTIONS_SHOW("VCB_BF_PM_FRAME", VCB_MENU_BUTTON8_LINK)
+							</OnClick>
+							<OnLoad>
+								getglobal(this:GetName().."_TITLE"):SetText(VCB_MENU_BUTTON8_NAME)
+							</OnLoad>
+						</Scripts>
+						<Layers>
+							<Layer>
+								-- Button Title
+								<FontString name="$parent_TITLE" inherits="GameFontNormalSmall" text="Profile Manager">
+									<Size x="130" y="40" />
+									<Anchors>
+										<Anchor point="CENTER">
+											<Offset x="0" y="7" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+						<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+						<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+					</Button>
+
+					-- Button 9
+					<Button name="VCB_BF_MENU_BUTTON9">
+						<Size x="130" y="40" />
+						<Anchors>
+							<Anchor point="TOP" relativeTo="VCB_BF_MENU_BUTTON8" relativePoint="BOTTOM">
+								<Offset x="0" y="10" />
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VCB_OPTIONS_HIDE_ALL()
+								VCB_OPTIONS_SHOW("VCB_BF_MISC_FRAME", VCB_MENU_BUTTON9_LINK)
+							</OnClick>
+							<OnLoad>
+								getglobal(this:GetName().."_TITLE"):SetText(VCB_MENU_BUTTON9_NAME)
+							</OnLoad>
+						</Scripts>
+						<Layers>
+							<Layer>
+								-- Button Title
+								<FontString name="$parent_TITLE" inherits="GameFontNormalSmall" text="Miscellaneous">
+									<Size x="130" y="40" />
+									<Anchors>
+										<Anchor point="CENTER">
+											<Offset x="0" y="7" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+						<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+						<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+					</Button>
+				</Frames>
+			</Frame>
+
+			-- Title Frame
+			<Frame name="VCB_BF_CONFIG_FRAME_TITLE">
+				<Size x="510" y="60" />
+				<Anchors>
+					<Anchor point="Left" relativeTo="VCB_BF_MENU_HEAD" relativePoint="RIGHT">
+						<Offset x="0" y="0" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parent_TEXT" font="Fonts\FRIZQT__.TTF" text="Consolidated Buffs" justifyH="LEFT">
+							<Size x="610" y="60" />
+							<Color r="1.0" g="0.82" b="0" />
+							<FontHeight val="92" />
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT">
+									<Offset x="5" y="-10" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."_TEXT"):SetText(VCB_CONFIG_FRAME_TITLE_ONLOAD)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+			-- Buff Frame
+			<Frame name="VCB_BF_BF_FRAME" hidden="true">
+        <Size x="510" y="380" />
+				<Anchors>
+					<Anchor point="topLeft" relativeTo="VCB_BF_MENU_BODY" relativePoint="topRIGHT">
+						<Offset x="0" y="0" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="32" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="16" />
+					</EdgeSize>
+				</Backdrop>
+        <Frames>
+          -- Checkbutton Invert Buff Order
+          <CheckButton name="VCB_BF_BF_FRAME_CHECKBUTTON3" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="VCB_BF_BF_FRAME" relativePoint="TOPLEFT">
+                <Offset x="10" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_INVERT_ORDER_TOOLTIP
+                getglobal("VCB_BF_BF_FRAME_CHECKBUTTON3Text"):SetText(VCB_COMMON_BUTTON_INVERT_ORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_BF_FRAME_INVERTBUFFMODE()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Checkbutton Invert Aura Orientation
+          <CheckButton name="VCB_BF_BF_FRAME_CHECKBUTTON_IBO" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON3" relativePoint="RIGHT">
+                <Offset x="160" y="" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_INVERT_ORIENTATION_TOOLTIP
+                getglobal("VCB_BF_BF_FRAME_CHECKBUTTON_IBOText"):SetText(VCB_COMMON_BUTTON_INVERT_ORIENTATION)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_BF_FRAME_INVERT_AURA_ORIENTATION()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+
+          -- Checkbutton Vertical Mode
+          <CheckButton name="VCB_BF_BF_FRAME_CHECKBUTTON1" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON3" relativePoint="BOTTOM">
+                <Offset x="0" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_VERTICAL_MODE_TOOLTIP
+                getglobal("VCB_BF_BF_FRAME_CHECKBUTTON1Text"):SetText(VCB_COMMON_BUTTON_VERTICAL_MODE)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_BF_FRAME_VERTICAL_MODE()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Buffs per Row Slider
+          <Slider name="VCB_BF_BF_FRAME_NumPerRowSlider" inherits="VCB_BF_SliderTemplate">
+            <!--<Size x="155" y="16" />-->
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON1" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BUFFS_PER_ROW_TOOLTIP
+                this:SetMinMaxValues(5,10)
+                this:SetValue(5)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_BF_FRAME_NumPerRowSliderText"):SetText(VCB_COMMON_SLIDER_BUFFS_PER_ROW)
+                getglobal("VCB_BF_BF_FRAME_NumPerRowSliderLow"):SetText("5")
+                getglobal("VCB_BF_BF_FRAME_NumPerRowSliderHigh"):SetText("10")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_NumPerRowSlider_CHANGE(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Scale Slider
+          <Slider name="VCB_BF_BF_FRAME_ScaleSlider" inherits="VCB_BF_SliderTemplate">
+            <!--<Size x="155" y="16" />-->
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_NumPerRowSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_SCALE_TOOLTIP
+                this:SetMinMaxValues(0.5,1.0)
+                this:SetValue(0.8)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_BF_FRAME_ScaleSliderText"):SetText(VCB_COMMON_SLIDER_SCALE)
+                getglobal("VCB_BF_BF_FRAME_ScaleSliderLow"):SetText("0.5")
+                getglobal("VCB_BF_BF_FRAME_ScaleSliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_ScaleSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- Checkbutton BG color
+          <CheckButton name="VCB_BF_BF_FRAME_CHECKBUTTON2" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON1" relativePoint="BOTTOM">
+                <Offset x="0" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_BACKGROUND_COLOR_TOOLTIP
+                getglobal("VCB_BF_BF_FRAME_CHECKBUTTON2Text"):SetText(VCB_COMMON_BUTTON_ENABLE_BACKGROUND_COLOR)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_BF_FRAME_ENABLE_BGCOLOR()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Padding H Slider
+          <Slider name="VCB_BF_BF_FRAME_AuraPaddingHSlider" inherits="VCB_BF_SliderTemplate">
+            <!--<Size x="155" y="16" />-->
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON2" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_PADDING_H_TOOLTIP
+                this:SetMinMaxValues(1,5)
+                this:SetValue(2)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_BF_FRAME_AuraPaddingHSliderText"):SetText(VCB_COMMON_SLIDER_PADDING_H)
+                getglobal("VCB_BF_BF_FRAME_AuraPaddingHSliderLow"):SetText("1")
+                getglobal("VCB_BF_BF_FRAME_AuraPaddingHSliderHigh"):SetText("5")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_AuraPaddingHChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Padding V Slider
+          <Slider name="VCB_BF_BF_FRAME_AuraPaddingVSlider" inherits="VCB_BF_SliderTemplate">
+            <!--<Size x="155" y="16" />-->
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_AuraPaddingHSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_PADDING_V_TOOLTIP
+                this:SetMinMaxValues(1,5)
+                this:SetValue(2)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_BF_FRAME_AuraPaddingVSliderText"):SetText(VCB_COMMON_SLIDER_PADDING_V)
+                getglobal("VCB_BF_BF_FRAME_AuraPaddingVSliderLow"):SetText("1")
+                getglobal("VCB_BF_BF_FRAME_AuraPaddingVSliderHigh"):SetText("5")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_AuraPaddingVChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- BG COLOR PICKER
+          <Button name="VCB_BF_BF_FRAME_Color1">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON2" relativePoint="BOTTOM">
+                <Offset x="0" y="-20" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Select BG Color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."_Font"):SetText(VCB_COMMON_COLOR_BACKGROUNDCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "BF_GENERAL_bg", "BF_GENERAL_enablebgcolor", "BFbg");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_BACKGROUNDCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Aura BG Opacity Slider
+          <Slider name="VCB_BF_BF_FRAME_BGOpaSlider" inherits="VCB_BF_SliderTemplate">
+            <!--<Size x="155" y="16" />-->
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_Color1" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BACKGROUND_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_BF_FRAME_BGOpaSliderText"):SetText(VCB_COMMON_SLIDER_BACKGROUND_OPACITY)
+                getglobal("VCB_BF_BF_FRAME_BGOpaSliderLow"):SetText("0")
+                getglobal("VCB_BF_BF_FRAME_BGOpaSliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_BGOpaSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Font Name Slider
+          <Slider name="VCB_BF_BF_FRAME_GFontSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_BGOpaSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_TOOLTIP
+                this:SetMinMaxValues(1,15)
+                this:SetValue(1)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_BF_FRAME_GFontSliderText"):SetText(VCB_COMMON_SLIDER_FONT)
+                getglobal("VCB_BF_BF_FRAME_GFontSliderLow"):SetText("1")
+                getglobal("VCB_BF_BF_FRAME_GFontSliderHigh"):SetText("15")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_GFontSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- Checkbutton Enable Font Border
+          <CheckButton name="VCB_BF_BF_FRAME_CHECKBUTTON_FBorder" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_BF_FRAME_Color1" relativePoint="BOTTOM">
+                <Offset x="0" y="-20" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_FONT_BORDER_TOOLTIP
+                getglobal("VCB_BF_BF_FRAME_CHECKBUTTON_FBorderText"):SetText(VCB_COMMON_BUTTON_ENABLE_FONT_BORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_BF_FRAME_G_ENABLE_BORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Font Offset X Slider
+          <Slider name="VCB_BF_BF_FRAME_GFontOffsetXSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON_FBorder" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OFFSET_X_TOOLTIP
+                this:SetMinMaxValues(-10,10)
+                this:SetValue(5)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_BF_FRAME_GFontOffsetXSliderText"):SetText(VCB_COMMON_SLIDER_FONT_OFFSET_X)
+                getglobal("VCB_BF_BF_FRAME_GFontOffsetXSliderLow"):SetText("-10")
+                getglobal("VCB_BF_BF_FRAME_GFontOffsetXSliderHigh"):SetText("10")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_GFontOffsetXSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Font Offset Y Slider
+          <Slider name="VCB_BF_BF_FRAME_GFontOffsetYSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_GFontOffsetXSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OFFSET_Y_TOOLTIP
+                this:SetMinMaxValues(-10,10)
+                this:SetValue(5)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_BF_FRAME_GFontOffsetYSliderText"):SetText(VCB_COMMON_SLIDER_FONT_OFFSET_Y)
+                getglobal("VCB_BF_BF_FRAME_GFontOffsetYSliderLow"):SetText("-10")
+                getglobal("VCB_BF_BF_FRAME_GFontOffsetYSliderHigh"):SetText("10")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_GFontOffsetYSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- COLOR PICKER Font Color
+          <Button name="VCB_BF_BF_FRAME_Color_fontcolor">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON_FBorder" relativePoint="BOTTOM">
+                <Offset x="0" y="-20" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Select font color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."_Font"):SetText(VCB_COMMON_COLOR_FONTCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "BF_GENERAL_font", nil, "BuffGFont");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_FONTCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Aura Font Size Slider
+          <Slider name="VCB_BF_BF_FRAME_GFontSizeSlider" inherits="VCB_BF_SliderTemplate">
+            <!--<Size x="155" y="16" />-->
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_Color_fontcolor" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_SIZE_TOOLTIP
+                this:SetMinMaxValues(6,16)
+                this:SetValue(12)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_BF_FRAME_GFontSizeSliderText"):SetText(VCB_COMMON_SLIDER_FONT_SIZE)
+                getglobal("VCB_BF_BF_FRAME_GFontSizeSliderLow"):SetText("6")
+                getglobal("VCB_BF_BF_FRAME_GFontSizeSliderHigh"):SetText("16")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_GFontSizeSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Font Opacity Slider
+          <Slider name="VCB_BF_BF_FRAME_GFontOpacitySlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_GFontSizeSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_BF_FRAME_GFontOpacitySliderText"):SetText(VCB_COMMON_SLIDER_FONT_OPACITY)
+                getglobal("VCB_BF_BF_FRAME_GFontOpacitySliderLow"):SetText("0")
+                getglobal("VCB_BF_BF_FRAME_GFontOpacitySliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_GFontOpacitySliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          
+          
+          -- Checkbutton Enable Border
+          <CheckButton name="VCB_BF_BF_FRAME_CHECKBUTTON5" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_BF_FRAME_Color_fontcolor" relativePoint="BOTTOM">
+                <Offset x="0" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_BORDER_TOOLTIP
+                getglobal("VCB_BF_BF_FRAME_CHECKBUTTON5Text"):SetText(VCB_COMMON_BUTTON_ENABLE_BORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_BF_FRAME_ENABLE_BORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Border COLOR PICKER
+          <Button name="VCB_BF_BF_FRAME_Color4">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON5" relativePoint="BOTTOM">
+                <Offset x="0" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Border Color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."_Font"):SetText(VCB_COMMON_COLOR_BORDERCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "BF_BORDER_border", "BF_BORDER_enableborder", "BFborder");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_BORDERCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Aura Border Opacity Slider
+          <Slider name="VCB_BF_BF_FRAME_BorderOpacitySlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_Color4" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BORDER_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_BF_FRAME_BorderOpacitySliderText"):SetText(VCB_COMMON_SLIDER_BORDER_OPACITY)
+                getglobal("VCB_BF_BF_FRAME_BorderOpacitySliderLow"):SetText("0")
+                getglobal("VCB_BF_BF_FRAME_BorderOpacitySliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_BorderOpacityChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Border Slider
+          <Slider name="VCB_BF_BF_FRAME_BorderSlider" inherits="VCB_BF_SliderTemplate">
+            <!--<Size x="155" y="16" />-->
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_BorderOpacitySlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BORDER_TOOLTIP
+                this:SetMinMaxValues(0,1)
+                this:SetValue(1)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_BF_FRAME_BorderSliderText"):SetText(VCB_COMMON_SLIDER_BORDER)
+                getglobal("VCB_BF_BF_FRAME_BorderSliderLow"):SetText("0")
+                getglobal("VCB_BF_BF_FRAME_BorderSliderHigh"):SetText("1")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_BorderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+
+          -- Checkbutton Aura Timer Font Border
+          <CheckButton name="VCB_BF_BF_FRAME_CHECKBUTTON4" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_BF_FRAME_Color4" relativePoint="BOTTOM">
+                <Offset x="0" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_FONT_BORDER_TOOLTIP
+                getglobal("VCB_BF_BF_FRAME_CHECKBUTTON4Text"):SetText(VCB_COMMON_BUTTON_ENABLE_FONT_BORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_BF_FRAME_TIMER_ENABLE_BORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Timer Font COLOR PICKER
+          <Button name="VCB_BF_BF_FRAME_Color2">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_BF_FRAME_CHECKBUTTON4" relativePoint="BOTTOM">
+                <Offset x="0" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Timer Font Color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."_Font"):SetText(VCB_COMMON_COLOR_FONTCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "BF_TIMER_font", nil, "BFfont");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_FONTCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Aura Timer Font Size Slider
+          <Slider name="VCB_BF_BF_FRAME_FontSizeSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_Color2" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_SIZE_TOOLTIP
+                this:SetMinMaxValues(6,16)
+                this:SetValue(10)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_BF_FRAME_FontSizeSliderText"):SetText(VCB_COMMON_SLIDER_FONT_SIZE)
+                getglobal("VCB_BF_BF_FRAME_FontSizeSliderLow"):SetText("6")
+                getglobal("VCB_BF_BF_FRAME_FontSizeSliderHigh"):SetText("16")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_FontSizeChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Timer Font Opacity Slider
+          <Slider name="VCB_BF_BF_FRAME_FontOpacitySlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_BF_FRAME_FontSizeSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_BF_FRAME_FontOpacitySliderText"):SetText(VCB_COMMON_SLIDER_FONT_OPACITY)
+                getglobal("VCB_BF_BF_FRAME_FontOpacitySliderLow"):SetText("0")
+                getglobal("VCB_BF_BF_FRAME_FontOpacitySliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_BF_FRAME_FontOpacityChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+        </Frames>
+			</Frame>
+
+			-- DBF Frame
+			<Frame name="VCB_BF_DBF_FRAME" hidden="true">
+				<Size x="510" y="380" />
+				<Anchors>
+					<Anchor point="topLeft" relativeTo="VCB_BF_MENU_BODY" relativePoint="topRIGHT">
+						<Offset x="0" y="0" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="32" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="16" />
+					</EdgeSize>
+				</Backdrop>
+        <Frames>
+          -- Checkbutton Invert Buff Order
+          <CheckButton name="VCB_BF_DBF_FRAME_CHECKBUTTON3" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="VCB_BF_DBF_FRAME" relativePoint="TOPLEFT">
+                <Offset x="10" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_INVERT_ORDER_TOOLTIP
+                getglobal("VCB_BF_DBF_FRAME_CHECKBUTTON3Text"):SetText(VCB_COMMON_BUTTON_INVERT_ORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_DBF_FRAME_INVERTBUFFORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Checkbutton Invert Aura Orientation
+          <CheckButton name="VCB_BF_DBF_FRAME_CHECKBUTTON_IBO" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON3" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_INVERT_ORIENTATION_TOOLTIP
+                getglobal("VCB_BF_DBF_FRAME_CHECKBUTTON_IBOText"):SetText(VCB_COMMON_BUTTON_INVERT_ORIENTATION)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_DBF_FRAME_INVERT_AURA_ORIENTATION()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+
+          -- Checkbutton Vertical Mode
+          <CheckButton name="VCB_BF_DBF_FRAME_CHECKBUTTON1" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON3" relativePoint="BOTTOM">
+                <Offset x="0" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_VERTICAL_MODE_TOOLTIP
+                getglobal("VCB_BF_DBF_FRAME_CHECKBUTTON1Text"):SetText(VCB_COMMON_BUTTON_VERTICAL_MODE)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_DBF_FRAME_VERTICAL_MODE()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Buffs Per Row Slider
+          <Slider name="VCB_BF_DBF_FRAME_NumPerRowSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON1" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BUFFS_PER_ROW_TOOLTIP
+                this:SetMinMaxValues(5,10)
+                this:SetValue(8)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_DBF_FRAME_NumPerRowSliderText"):SetText(VCB_COMMON_SLIDER_BUFFS_PER_ROW)
+                getglobal("VCB_BF_DBF_FRAME_NumPerRowSliderLow"):SetText("5")
+                getglobal("VCB_BF_DBF_FRAME_NumPerRowSliderHigh"):SetText("10")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_NumPerRowSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Scale Slider
+          <Slider name="VCB_BF_DBF_FRAME_ScaleSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_NumPerRowSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_SCALE_TOOLTIP
+                this:SetMinMaxValues(0.5,1.0)
+                this:SetValue(0.8)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_DBF_FRAME_ScaleSliderText"):SetText(VCB_COMMON_SLIDER_SCALE)
+                getglobal("VCB_BF_DBF_FRAME_ScaleSliderLow"):SetText("0.5")
+                getglobal("VCB_BF_DBF_FRAME_ScaleSliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_ScaleSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- Checkbutton BG Color
+          <CheckButton name="VCB_BF_DBF_FRAME_CHECKBUTTON2" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON1" relativePoint="BOTTOM">
+                <Offset x="0" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_BACKGROUND_COLOR_TOOLTIP
+                getglobal("VCB_BF_DBF_FRAME_CHECKBUTTON2Text"):SetText(VCB_COMMON_BUTTON_ENABLE_BACKGROUND_COLOR)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_DBF_FRAME_ENABLE_BGCOLOR()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Padding H Slider
+          <Slider name="VCB_BF_DBF_FRAME_AuraPaddingHSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON2" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_PADDING_H_TOOLTIP
+                this:SetMinMaxValues(1,5)
+                this:SetValue(2)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_DBF_FRAME_AuraPaddingHSliderText"):SetText(VCB_COMMON_SLIDER_PADDING_H)
+                getglobal("VCB_BF_DBF_FRAME_AuraPaddingHSliderLow"):SetText("1")
+                getglobal("VCB_BF_DBF_FRAME_AuraPaddingHSliderHigh"):SetText("5")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_AuraPaddingHSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Padding V Slider
+          <Slider name="VCB_BF_DBF_FRAME_AuraPaddingVSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_AuraPaddingHSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_PADDING_V_TOOLTIP
+                this:SetMinMaxValues(1,5)
+                this:SetValue(2)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_DBF_FRAME_AuraPaddingVSliderText"):SetText(VCB_COMMON_SLIDER_PADDING_V)
+                getglobal("VCB_BF_DBF_FRAME_AuraPaddingVSliderLow"):SetText("1")
+                getglobal("VCB_BF_DBF_FRAME_AuraPaddingVSliderHigh"):SetText("5")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_AuraPaddingVSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          
+
+          -- BG COLOR PICKER
+          <Button name="VCB_BF_DBF_FRAME_Color1">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON2" relativePoint="BOTTOM">
+                <Offset x="0" y="-15" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Select background color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."_Font"):SetText(VCB_COMMON_COLOR_BACKGROUNDCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "DBF_GENERAL_bg", "DBF_GENERAL_enablebgcolor", "DebuffBG");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_BACKGROUNDCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Aura BGOpa Slider
+          <Slider name="VCB_BF_DBF_FRAME_BGOpaSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_Color1" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BACKGROUND_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_DBF_FRAME_BGOpaSliderText"):SetText(VCB_COMMON_SLIDER_BACKGROUND_OPACITY)
+                getglobal("VCB_BF_DBF_FRAME_BGOpaSliderLow"):SetText("0")
+                getglobal("VCB_BF_DBF_FRAME_BGOpaSliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_BGOpaSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>             
+          -- Aura Font Name Slider
+          <Slider name="VCB_BF_DBF_FRAME_GFontSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_BGOpaSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_TOOLTIP
+                this:SetMinMaxValues(1,15)
+                this:SetValue(1)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_DBF_FRAME_GFontSliderText"):SetText(VCB_COMMON_SLIDER_FONT)
+                getglobal("VCB_BF_DBF_FRAME_GFontSliderLow"):SetText("1")
+                getglobal("VCB_BF_DBF_FRAME_GFontSliderHigh"):SetText("15")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_GFontSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+      
+          -- Checkbutton Enable Font Border
+          <CheckButton name="VCB_BF_DBF_FRAME_CHECKBUTTON_FBorder" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_DBF_FRAME_Color1" relativePoint="BOTTOM">
+                <Offset x="0" y="-15" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_FONT_BORDER_TOOLTIP
+                getglobal("VCB_BF_DBF_FRAME_CHECKBUTTON_FBorderText"):SetText(VCB_COMMON_BUTTON_ENABLE_FONT_BORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_DBF_FRAME_G_ENABLE_BORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Offset X Slider
+          <Slider name="VCB_BF_DBF_FRAME_GFontOffsetXSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON_FBorder" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OFFSET_Y_TOOLTIP
+                this:SetMinMaxValues(-10,10)
+                this:SetValue(5)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_DBF_FRAME_GFontOffsetXSliderText"):SetText(VCB_COMMON_SLIDER_FONT_OFFSET_Y)
+                getglobal("VCB_BF_DBF_FRAME_GFontOffsetXSliderLow"):SetText("-10")
+                getglobal("VCB_BF_DBF_FRAME_GFontOffsetXSliderHigh"):SetText("10")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_GFontOffsetXSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura offset Y Slider
+          <Slider name="VCB_BF_DBF_FRAME_GFontOffsetYSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_GFontOffsetXSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OFFSET_Y_TOOLTIP
+                this:SetMinMaxValues(-10,10)
+                this:SetValue(5)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_DBF_FRAME_GFontOffsetYSliderText"):SetText(VCB_COMMON_SLIDER_FONT_OFFSET_Y)
+                getglobal("VCB_BF_DBF_FRAME_GFontOffsetYSliderLow"):SetText("-10")
+                getglobal("VCB_BF_DBF_FRAME_GFontOffsetYSliderHigh"):SetText("10")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_GFontOffsetYSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+
+          -- COLOR PICKER Font Color
+          <Button name="VCB_BF_DBF_FRAME_Color_fontcolor">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON_FBorder" relativePoint="BOTTOM">
+                <Offset x="0" y="-15" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parentFont" inherits="GameFontNormalSmall" text="Select font color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."Font"):SetText(VCB_COMMON_COLOR_FONTCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "DBF_GENERAL_font", nil, "DebuffGFont");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_FONTCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Aura Font Size Slider
+          <Slider name="VCB_BF_DBF_FRAME_GFontSizeSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_Color_fontcolor" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_SIZE_TOOLTIP
+                this:SetMinMaxValues(6,16)
+                this:SetValue(12)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_DBF_FRAME_GFontSizeSliderText"):SetText(VCB_COMMON_SLIDER_FONT_SIZE)
+                getglobal("VCB_BF_DBF_FRAME_GFontSizeSliderLow"):SetText("6")
+                getglobal("VCB_BF_DBF_FRAME_GFontSizeSliderHigh"):SetText("16")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_GFontSizeSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Font Opacity Slider
+          <Slider name="VCB_BF_DBF_FRAME_GFontOpacitySlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_GFontSizeSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_DBF_FRAME_GFontOpacitySliderText"):SetText(VCB_COMMON_SLIDER_FONT_OPACITY)
+                getglobal("VCB_BF_DBF_FRAME_GFontOpacitySliderLow"):SetText("0")
+                getglobal("VCB_BF_DBF_FRAME_GFontOpacitySliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_GFontOpacitySliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- Checkbutton Enable Border
+          <CheckButton name="VCB_BF_DBF_FRAME_CHECKBUTTON5" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_DBF_FRAME_Color_fontcolor" relativePoint="BOTTOM">
+                <Offset x="0" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_BORDER_TOOLTIP
+                getglobal("VCB_BF_DBF_FRAME_CHECKBUTTON5Text"):SetText(VCB_COMMON_BUTTON_ENABLE_BORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_DBF_FRAME_ENABLE_BORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Border Slider
+          <Slider name="VCB_BF_DBF_FRAME_BorderSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON5" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BORDER_TOOLTIP
+                this:SetMinMaxValues(0,1)
+                this:SetValue(1)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_DBF_FRAME_BorderSliderText"):SetText(VCB_COMMON_SLIDER_BORDER)
+                getglobal("VCB_BF_DBF_FRAME_BorderSliderLow"):SetText("0")
+                getglobal("VCB_BF_DBF_FRAME_BorderSliderHigh"):SetText("1")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_BorderSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Border Opacity Slider
+          <Slider name="VCB_BF_DBF_FRAME_BorderOpacitySlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_BorderSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BORDER_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_DBF_FRAME_BorderOpacitySliderText"):SetText(VCB_COMMON_SLIDER_BORDER_OPACITY)
+                getglobal("VCB_BF_DBF_FRAME_BorderOpacitySliderLow"):SetText("0")
+                getglobal("VCB_BF_DBF_FRAME_BorderOpacitySliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_BorderOpacitySliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- COLOR PICKER NONE
+          <Button name="VCB_BF_DBF_FRAME_Color_NONE">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON5" relativePoint="BOTTOM">
+                <Offset x="0" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parentFont" inherits="GameFontNormalSmall" text="None" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."Font"):SetText(VCB_DBF_FRAME_COLOR_NONE)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "DBF_BORDER_none", "DBF_BORDER_enableborder", "DebuffBorderColor");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_DBF_FRAME_COLOR_NONE_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- COLOR PICKER POISON
+          <Button name="VCB_BF_DBF_FRAME_Color_POISON">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_Color_NONE" relativePoint="RIGHT">
+                <Offset x="55" y="0" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parentFont" inherits="GameFontNormalSmall" text="Poison" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."Font"):SetText(VCB_DBF_FRAME_COLOR_POISON)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "DBF_BORDER_poison", "DBF_BORDER_enableborder", "DebuffBorderColor");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_DBF_FRAME_COLOR_POISON_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- COLOR PICKER MAGIC
+          <Button name="VCB_BF_DBF_FRAME_Color_MAGIC">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_Color_POISON" relativePoint="RIGHT">
+                <Offset x="55" y="0" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parentFont" inherits="GameFontNormalSmall" text="Magic" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."Font"):SetText(VCB_DBF_FRAME_COLOR_MAGIC)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "DBF_BORDER_magic", "DBF_BORDER_enableborder", "DebuffBorderColor");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_DBF_FRAME_COLOR_MAGIC_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- COLOR PICKER CURSE
+          <Button name="VCB_BF_DBF_FRAME_Color_CURSE">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_Color_MAGIC" relativePoint="RIGHT">
+                <Offset x="55" y="0" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parentFont" inherits="GameFontNormalSmall" text="Curse" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."Font"):SetText(VCB_DBF_FRAME_COLOR_CURSE)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "DBF_BORDER_curse", "DBF_BORDER_enableborder", "DebuffBorderColor");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_DBF_FRAME_COLOR_CURSE_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- COLOR PICKER DISEASE
+          <Button name="VCB_BF_DBF_FRAME_Color_DISEASE">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_Color_CURSE" relativePoint="RIGHT">
+                <Offset x="55" y="0" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parentFont" inherits="GameFontNormalSmall" text="Disease" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."Font"):SetText(VCB_DBF_FRAME_COLOR_DISEASE)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "DBF_BORDER_disease", "DBF_BORDER_enableborder", "DebuffBorderColor");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_DBF_FRAME_COLOR_DISEASE_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+
+
+          -- Checkbutton Aura Time Font Border
+          <CheckButton name="VCB_BF_DBF_FRAME_CHECKBUTTON4" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_DBF_FRAME_Color_NONE" relativePoint="BOTTOM">
+                <Offset x="0" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_FONT_BORDER_TOOLTIP
+                getglobal("VCB_BF_DBF_FRAME_CHECKBUTTON4Text"):SetText(VCB_COMMON_BUTTON_ENABLE_FONT_BORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_DBF_FRAME_ENABLE_FONTBORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+
+          -- COLOR PICKER
+          <Button name="VCB_BF_DBF_FRAME_Color2">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_DBF_FRAME_CHECKBUTTON4" relativePoint="BOTTOM">
+                <Offset x="0" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parentFont" inherits="GameFontNormalSmall" text="Select font color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."Font"):SetText(VCB_COMMON_COLOR_FONTCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "DBF_TIMER_font", nil, "DebuffFont");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_FONTCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Aura Font Size Slider
+          <Slider name="VCB_BF_DBF_FRAME_FontSizeSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_Color2" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_SIZE_TOOLTIP
+                this:SetMinMaxValues(6,16)
+                this:SetValue(10)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_DBF_FRAME_FontSizeSliderText"):SetText(VCB_COMMON_SLIDER_FONT_SIZE)
+                getglobal("VCB_BF_DBF_FRAME_FontSizeSliderLow"):SetText("6")
+                getglobal("VCB_BF_DBF_FRAME_FontSizeSliderHigh"):SetText("16")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_FontSizeSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Font Opacity Slider
+          <Slider name="VCB_BF_DBF_FRAME_FontOpacitySlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_DBF_FRAME_FontSizeSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_DBF_FRAME_FontOpacitySliderText"):SetText(VCB_COMMON_SLIDER_FONT_OPACITY)
+                getglobal("VCB_BF_DBF_FRAME_FontOpacitySliderLow"):SetText("0")
+                getglobal("VCB_BF_DBF_FRAME_FontOpacitySliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_DBF_FRAME_FontOpacitySliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+        </Frames>
+			</Frame>
+
+			-- Weapon Frame
+			<Frame name="VCB_BF_WP_FRAME" hidden="true">
+				<Size x="510" y="380" />
+				<Anchors>
+					<Anchor point="topLeft" relativeTo="VCB_BF_MENU_BODY" relativePoint="topRIGHT">
+						<Offset x="0" y="0" />
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="32" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="16" />
+					</EdgeSize>
+				</Backdrop>
+        <Frames>
+          -- Checkbutton Vertical Mode
+          <CheckButton name="VCB_BF_WP_FRAME_CHECKBUTTON1" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+                <Offset x="10" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_VERTICAL_MODE_TOOLTIP
+                getglobal("VCB_BF_WP_FRAME_CHECKBUTTON1Text"):SetText(VCB_COMMON_BUTTON_VERTICAL_MODE)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_WP_FRAME_VERTICAL_MODE()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Checkbutton Attach to Buff Frame
+          <!-- 240630 quote out
+          <CheckButton name="VCB_BF_WP_FRAME_CHECKBUTTON7" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON1" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_WP_FRAME_ATTACH_TO_BF_FRAME_TOOLTIP
+                getglobal("VCB_BF_WP_FRAME_CHECKBUTTON7Text"):SetText(VCB_WP_FRAME_ATTACH_TO_BF_FRAME)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_WP_FRAME_ATTACH()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -->
+          
+          -- Checkbutton Invert Order
+          <CheckButton name="VCB_BF_WP_FRAME_CHECKBUTTON_INVERTORDER" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON1" relativePoint="BOTTOM">
+                <Offset x="0" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_INVERT_ORDER_TOOLTIP
+                getglobal("VCB_BF_WP_FRAME_CHECKBUTTON_INVERTORDERText"):SetText(VCB_COMMON_BUTTON_INVERT_ORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_SAVE["WP_GENERAL_invert"] = not VCB_SAVE["WP_GENERAL_invert"]
+                VCB_BF_WEAPON_BUTTON_OnEvent(false)
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Scale Slider
+          <Slider name="VCB_BF_WP_FRAME_ScaleSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON_INVERTORDER" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_SCALE_TOOLTIP
+                this:SetMinMaxValues(0.5,1.5)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_WP_FRAME_ScaleSliderText"):SetText(VCB_COMMON_SLIDER_SCALE)
+                getglobal("VCB_BF_WP_FRAME_ScaleSliderLow"):SetText("0.5")
+                getglobal("VCB_BF_WP_FRAME_ScaleSliderHigh"):SetText("1.5")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_ScaleSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- Checkbutton BG Color
+          <CheckButton name="VCB_BF_WP_FRAME_CHECKBUTTON2" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON_INVERTORDER" relativePoint="BOTTOM">
+                <Offset x="0" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_BACKGROUND_COLOR_TOOLTIP
+                getglobal("VCB_BF_WP_FRAME_CHECKBUTTON2Text"):SetText(VCB_COMMON_BUTTON_ENABLE_BACKGROUND_COLOR)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_WP_FRAME_ENABLEBGCOLOR()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Padding H Slider
+          <Slider name="VCB_BF_WP_FRAME_AuraPaddingHSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON2" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_PADDING_H_TOOLTIP
+                this:SetMinMaxValues(1,5)
+                this:SetValue(2)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_WP_FRAME_AuraPaddingHSliderText"):SetText(VCB_COMMON_SLIDER_PADDING_H)
+                getglobal("VCB_BF_WP_FRAME_AuraPaddingHSliderLow"):SetText("1")
+                getglobal("VCB_BF_WP_FRAME_AuraPaddingHSliderHigh"):SetText("5")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_AuraPaddingHSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Aura Padding V Slider
+          <Slider name="VCB_BF_WP_FRAME_AuraPaddingVSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_AuraPaddingHSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_PADDING_H_TOOLTIP
+                this:SetMinMaxValues(1,5)
+                this:SetValue(2)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_WP_FRAME_AuraPaddingVSliderText"):SetText(VCB_COMMON_SLIDER_PADDING_H)
+                getglobal("VCB_BF_WP_FRAME_AuraPaddingVSliderLow"):SetText("1")
+                getglobal("VCB_BF_WP_FRAME_AuraPaddingVSliderHigh"):SetText("5")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_AuraPaddingVSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- COLOR PICKER Weapon Frame BG Color
+          <Button name="VCB_BF_WP_FRAME_Color1">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON2" relativePoint="BOTTOM">
+                <Offset x="0" y="-20" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Select background color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."_Font"):SetText(VCB_COMMON_COLOR_BACKGROUNDCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "WP_GENERAL_bg", "WP_GENERAL_enablebgcolor", "WeaponBG");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_BACKGROUNDCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Aura BG Opacity Slider
+          <Slider name="VCB_BF_WP_FRAME_BGOpaSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_Color1" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BACKGROUND_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_WP_FRAME_BGOpaSliderText"):SetText(VCB_COMMON_SLIDER_BACKGROUND_OPACITY)
+                getglobal("VCB_BF_WP_FRAME_BGOpaSliderLow"):SetText("0")
+                getglobal("VCB_BF_WP_FRAME_BGOpaSliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_BGOpaSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Slider Aura Font Name
+          <Slider name="VCB_BF_WP_FRAME_FontSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_BGOpaSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_TOOLTIP
+                this:SetMinMaxValues(1,15)
+                this:SetValue(1)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_WP_FRAME_FontSliderText"):SetText(VCB_COMMON_SLIDER_FONT)
+                getglobal("VCB_BF_WP_FRAME_FontSliderLow"):SetText("1")
+                getglobal("VCB_BF_WP_FRAME_FontSliderHigh"):SetText("15")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_FontSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+          -- Checkbutton Enable Font Border
+          <CheckButton name="VCB_BF_WP_FRAME_CHECKBUTTON8" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_WP_FRAME_Color1" relativePoint="BOTTOM">
+                <Offset x="0" y="-20" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_FONT_BORDER_TOOLTIP
+                getglobal("VCB_BF_WP_FRAME_CHECKBUTTON8Text"):SetText(VCB_COMMON_BUTTON_ENABLE_FONT_BORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_WP_FRAME_ENABLE_FONT_BORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Slider Aura Offset X
+          <Slider name="VCB_BF_WP_FRAME_OffsetXSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON8" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OFFSET_X_TOOLTIP
+                this:SetMinMaxValues(-10,10)
+                this:SetValue(-5)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_WP_FRAME_OffsetXSliderText"):SetText(VCB_COMMON_SLIDER_FONT_OFFSET_X)
+                getglobal("VCB_BF_WP_FRAME_OffsetXSliderLow"):SetText("-10")
+                getglobal("VCB_BF_WP_FRAME_OffsetXSliderHigh"):SetText("10")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_OffsetXSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Slider Aura Offset Y
+          <Slider name="VCB_BF_WP_FRAME_OffsetYSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_OffsetXSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OFFSET_Y_TOOLTIP
+                this:SetMinMaxValues(-10,10)
+                this:SetValue(-5)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_WP_FRAME_OffsetYSliderText"):SetText(VCB_COMMON_SLIDER_FONT_OFFSET_Y)
+                getglobal("VCB_BF_WP_FRAME_OffsetYSliderLow"):SetText("-10")
+                getglobal("VCB_BF_WP_FRAME_OffsetYSliderHigh"):SetText("10")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_OffsetYSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+
+          -- COLOR PICKER Weapon Frame Font Color
+          <Button name="VCB_BF_WP_FRAME_Color5">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON8" relativePoint="BOTTOM">
+                <Offset x="0" y="-20" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parentFont" inherits="GameFontNormalSmall" text="Select font color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."Font"):SetText(VCB_COMMON_COLOR_FONTCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "WP_GENERAL_font", nil, "WPFont");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_FONTCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>             
+          -- Slider Aura Fontsize
+          <Slider name="VCB_BF_WP_FRAME_FontSizeSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_Color5" relativePoint="RIGHT">
+                <Offset x="160" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_SIZE_TOOLTIP
+                this:SetMinMaxValues(6,16)
+                this:SetValue(10)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_WP_FRAME_FontSizeSliderText"):SetText(VCB_COMMON_SLIDER_FONT_SIZE)
+                getglobal("VCB_BF_WP_FRAME_FontSizeSliderLow"):SetText("6")
+                getglobal("VCB_BF_WP_FRAME_FontSizeSliderHigh"):SetText("16")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_FontSizeSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Slider Aura Font Opacity
+          <Slider name="VCB_BF_WP_FRAME_FontOpacitySlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_FontSizeSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_WP_FRAME_FontOpacitySliderText"):SetText(VCB_COMMON_SLIDER_FONT_OPACITY)
+                getglobal("VCB_BF_WP_FRAME_FontOpacitySliderLow"):SetText("0")
+                getglobal("VCB_BF_WP_FRAME_FontOpacitySliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_FontOpacitySliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+
+          -- Checkbutton Enable Border
+          <CheckButton name="VCB_BF_WP_FRAME_CHECKBUTTON5" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_WP_FRAME_Color5" relativePoint="BOTTOM">
+                <Offset x="0" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_BORDER_TOOLTIP
+                getglobal("VCB_BF_WP_FRAME_CHECKBUTTON5Text"):SetText(VCB_COMMON_BUTTON_ENABLE_BORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_WP_FRAME_ENABLE_BORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          
+          -- COLOR PICKER Weapon Frame Border
+          <Button name="VCB_BF_WP_FRAME_Color4">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON5" relativePoint="BOTTOM">
+                <Offset x="0" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Select border color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."_Font"):SetText(VCB_COMMON_COLOR_BORDERCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "WP_BORDER_border", "WP_BORDER_enableborder", "WPBorder");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_BORDERCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Slider Aura Border
+          <Slider name="VCB_BF_WP_FRAME_BorderSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_Color4" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BORDER_TOOLTIP
+                this:SetMinMaxValues(0,1)
+                this:SetValue(1)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_WP_FRAME_BorderSliderText"):SetText(VCB_COMMON_SLIDER_BORDER)
+                getglobal("VCB_BF_WP_FRAME_BorderSliderLow"):SetText("0")
+                getglobal("VCB_BF_WP_FRAME_BorderSliderHigh"):SetText("1")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_BorderSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Slider Aura Border Opacity
+          <Slider name="VCB_BF_WP_FRAME_BorderOpacitySlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_BorderSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_BORDER_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_WP_FRAME_BorderOpacitySliderText"):SetText(VCB_COMMON_SLIDER_BORDER_OPACITY)
+                getglobal("VCB_BF_WP_FRAME_BorderOpacitySliderLow"):SetText("0")
+                getglobal("VCB_BF_WP_FRAME_BorderOpacitySliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_BorderOpacitySliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+
+
+          -- Checkbutton Aura Timer Font Border
+          <CheckButton name="VCB_BF_WP_FRAME_CHECKBUTTON4" inherits="VCB_BF_CheckTemplate">
+            <Size x="25" y="25" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_WP_FRAME_Color4" relativePoint="BOTTOM">
+                <Offset x="0" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_COMMON_BUTTON_ENABLE_FONT_BORDER_TOOLTIP
+                getglobal("VCB_BF_WP_FRAME_CHECKBUTTON4Text"):SetText(VCB_COMMON_BUTTON_ENABLE_FONT_BORDER)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_WP_FRAME_TIMER_ENABLE_BORDER()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+
+          -- COLOR PICKER Aura Timer Font Coloer
+          <Button name="VCB_BF_WP_FRAME_Color2">
+            <Size x="16" y="16" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_WP_FRAME_CHECKBUTTON4" relativePoint="BOTTOM">
+                <Offset x="0" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parent_Font" inherits="GameFontNormalSmall" text="Select font color" justifyH="LEFT">
+                  <Size x="200" y="16" />
+                  <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+                      <Offset x="5" y="0" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+              <Layer level="BACKGROUND">
+                <Texture name="$parent_SwatchBg">
+                  <Size x="14" y="14" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="0" />
+                    </Anchor>
+                  </Anchors>
+                  <Color r="1.0" g="1.0" b="1.0" />
+                </Texture>
+              </Layer>
+            </Layers>
+            <Scripts>
+              <OnLoad>
+                getglobal(this:GetName().."_Font"):SetText(VCB_COMMON_COLOR_FONTCOLOR)
+                getglobal(this:GetName().."_SwatchBg").r = 1.0;
+                getglobal(this:GetName().."_SwatchBg").g = 1.0;
+                getglobal(this:GetName().."_SwatchBg").b = 1.0;
+              </OnLoad>
+              <OnClick>
+                VCB_BF_OpenColorPicker(this, "WP_TIMER_font", nil, "WPTimer");
+              </OnClick>
+              <OnEnter>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+                GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+                GameTooltip:SetText(VCB_COMMON_COLOR_FONTCOLOR_TOOLTIP, nil, nil, nil, nil, 1);
+              </OnEnter>
+              <OnLeave>
+                getglobal(this:GetName().."_SwatchBg"):SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                GameTooltip:Hide();
+              </OnLeave>
+            </Scripts>
+            <NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch" />
+          </Button>
+          -- Slider Aura Timer Font Size
+          <Slider name="VCB_BF_WP_FRAME_TIMER_FontSizeSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_Color2" relativePoint="RIGHT">
+                <Offset x="165" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_SIZE_TOOLTIP
+                this:SetMinMaxValues(6,16)
+                this:SetValue(10)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_WP_FRAME_TIMER_FontSizeSliderText"):SetText(VCB_COMMON_SLIDER_FONT_SIZE)
+                getglobal("VCB_BF_WP_FRAME_TIMER_FontSizeSliderLow"):SetText("6")
+                getglobal("VCB_BF_WP_FRAME_TIMER_FontSizeSliderHigh"):SetText("16")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_TIMER_FontSizeSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          -- Slider Aura Timer Font Opacity
+          <Slider name="VCB_BF_WP_FRAME_TIMER_FontOpacitySlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="120" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_WP_FRAME_TIMER_FontSizeSlider" relativePoint="RIGHT">
+                <Offset x="50" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_COMMON_SLIDER_FONT_OPACITY_TOOLTIP
+                this:SetMinMaxValues(0,1.0)
+                this:SetValue(1.0)
+                this:SetValueStep(0.1)
+                getglobal("VCB_BF_WP_FRAME_TIMER_FontOpacitySliderText"):SetText(VCB_COMMON_SLIDER_FONT_OPACITY)
+                getglobal("VCB_BF_WP_FRAME_TIMER_FontOpacitySliderLow"):SetText("0")
+                getglobal("VCB_BF_WP_FRAME_TIMER_FontOpacitySliderHigh"):SetText("1.0")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_WP_FRAME_TIMER_FontOpacitySliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+        </Frames>
+			</Frame>
+
+			-- Profile Manager Frame
+			<Frame name="VCB_BF_PM_FRAME" hidden="true">
+				<Size x="510" y="380" />
+				<Anchors>
+					<Anchor point="topLeft" relativeTo="VCB_BF_MENU_BODY" relativePoint="topRIGHT">
+						<Offset x="0" y="0" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnShow>
+						VCB_BF_PM_FRAME_RIGHT_SCROLLFRAME_Update()
+						getglobal("VCB_BF_PM_FRAME_LEFT_CURRENT_INBOX_TEXT"):SetText("Unknown")
+					</OnShow>
+				</Scripts>
+        -- PM Frame Body
+				<Frames>
+          -- PM Frame Left Body
+					<Frame name="VCB_BF_PM_FRAME_LEFT">
+            <!--<Size x="220" y="435" />-->
+						<Size x="220" y="380" />
+						<Anchors>
+							<Anchor point="Left">
+								<Offset x="0" y="0" />
+							</Anchor>
+						</Anchors>
+						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<BackgroundInsets>
+								<AbsInset left="5" right="5" top="5" bottom="5" />
+							</BackgroundInsets>
+							<TileSize>
+								<AbsValue val="32" />
+							</TileSize>
+							<EdgeSize>
+								<AbsValue val="16" />
+							</EdgeSize>
+						</Backdrop>
+						<Layers>
+							<Layer>
+								<FontString name="$parent_INSERT" font="Fonts\FRIZQT__.TTF" text="Insert name:" justifyH="LEFT">
+									<Size x="220" y="60" />
+									<Color r="1.0" g="0.82" b="0" />
+									<FontHeight val="20" />
+									<Anchors>
+										<Anchor point="TOP">
+											<Offset x="15" y="5" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="$parent_SELECT" font="Fonts\FRIZQT__.TTF" text="Selected profile:" justifyH="LEFT">
+									<Size x="220" y="60" />
+									<Color r="1.0" g="0.82" b="0" />
+									<FontHeight val="20" />
+									<Anchors>
+										<Anchor point="TOP">
+											<Offset x="15" y="-125" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="$parent_CURRENT" font="Fonts\FRIZQT__.TTF" text="Current profile:" justifyH="LEFT">
+									<Size x="220" y="60" />
+									<Color r="1.0" g="0.82" b="0" />
+									<FontHeight val="20" />
+									<Anchors>
+										<Anchor point="TOP">
+											<Offset x="15" y="-285" />
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								getglobal(this:GetName().."_INSERT"):SetText(VCB_PM_FRAME_LEFT_INSERT_TEXT)
+								getglobal(this:GetName().."_SELECT"):SetText(VCB_PM_FRAME_LEFT_SELECT_TEXT)
+								getglobal(this:GetName().."_CURRENT"):SetText(VCB_PM_FRAME_LEFT_CURRENT_TEXT)
+							</OnLoad>
+						</Scripts>
+						<Frames>
+							<EditBox name="VCB_BF_PM_FRAME_EditBox" letters="80">
+								<Size x="160" y="40" />
+								<Anchors>
+									<Anchor point="TOP" relativeTo="VCB_BF_PM_FRAME_LEFT_INSERT" relativePoint="BOTTOM">
+										<Offset x="-15" y="15" />
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer level="BACKGROUND">
+										<Texture file="Interface\ChatFrame\UI-ChatInputBorder-Left">
+											<Size x="100" y="40" />
+											<Anchors>
+												<Anchor point="LEFT">
+													<Offset x="-20" y="0" />
+												</Anchor>
+											</Anchors>
+											<TexCoords left="0" right="0.2" top="0" bottom="1.0" />
+										</Texture>
+										<Texture file="Interface\ChatFrame\UI-ChatInputBorder-Right">
+											<Size x="100" y="40" />
+											<Anchors>
+												<Anchor point="RIGHT">
+													<Offset x="15" y="0" />
+												</Anchor>
+											</Anchors>
+											<TexCoords left="0.7" right="1.0" top="0" bottom="1.0" />
+										</Texture>
+									</Layer>
+								</Layers>
+								<FontString inherits="ChatFontNormal" />
+							</EditBox>
+							<Button name="VCB_PM_FRAME_LEFT_SAVE">
+								<Size x="190" y="40" />
+								<Anchors>
+									<Anchor point="TOP" relativeTo="VCB_BF_PM_FRAME_EditBox" relativePoint="BOTTOM">
+										<Offset x="0" y="0" />
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="Save">
+											<Size x="190" y="40" />
+											<Anchors>
+												<Anchor point="CENTER">
+													<Offset x="0" y="7" />
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+								</Layers>
+								<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+								<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+								<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+								<Scripts>
+									<OnClick>
+										VCB_BF_PM_FRAME_SAVE()
+									</OnClick>
+									<OnLoad>
+										getglobal(this:GetName().."_Text"):SetText(VCB_PM_FRAME_LEFT_SAVE_TEXT)
+									</OnLoad>
+								</Scripts>
+							</Button>
+              -- LEFT_SELECTED_INBOX
+							<Frame name="VCB_BF_PM_FRAME_LEFT_SELECTED_INBOX">
+								<Size x="195" y="40" />
+								<Anchors>
+									<Anchor point="TOP" relativeTo="VCB_PM_FRAME_LEFT_SAVE" relativePoint="BOTTOM">
+										<Offset x="0" y="-50" />
+									</Anchor>
+								</Anchors>
+								<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+									<BackgroundInsets>
+										<AbsInset left="11" right="12" top="12" bottom="11" />
+									</BackgroundInsets>
+									<TileSize>
+										<AbsValue val="32" />
+									</TileSize>
+									<EdgeSize>
+										<AbsValue val="16" />
+									</EdgeSize>
+								</Backdrop>
+								<Layers>
+									<Layer>
+										<FontString name="$parent_TEXT" inherits="GameFontNormalSmall" text="">
+											<Size x="195" y="40" />
+											<Anchors>
+												<Anchor point="CENTER">
+													<Offset x="0" y="1" />
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+							<Button name="VCB_PM_FRAME_LEFT_DELETE">
+								<Size x="190" y="40" />
+								<Anchors>
+									<Anchor point="TOP" relativeTo="VCB_BF_PM_FRAME_LEFT_SELECTED_INBOX" relativePoint="BOTTOM">
+										<Offset x="0" y="0" />
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="Delete">
+											<Size x="190" y="40" />
+											<Anchors>
+												<Anchor point="CENTER">
+													<Offset x="0" y="7" />
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+								</Layers>
+								<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+								<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+								<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+								<Scripts>
+									<OnClick>
+										VCB_BF_PM_FRAME_DELETE()
+									</OnClick>
+									<OnLoad>
+										getglobal(this:GetName().."_Text"):SetText(VCB_PM_FRAME_LEFT_DELETE_TEXT)
+									</OnLoad>
+								</Scripts>
+							</Button>
+							<Button name="VCB_PM_FRAME_LEFT_LOAD">
+								<Size x="190" y="40" />
+								<Anchors>
+									<Anchor point="TOP" relativeTo="VCB_PM_FRAME_LEFT_DELETE" relativePoint="BOTTOM">
+										<Offset x="0" y="10" />
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="Load">
+											<Size x="190" y="40" />
+											<Anchors>
+												<Anchor point="CENTER">
+													<Offset x="0" y="7" />
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+								</Layers>
+								<NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+								<PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+								<HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+								<Scripts>
+									<OnClick>
+										VCB_BF_PM_FRAME_LOAD()
+									</OnClick>
+									<OnLoad>
+										getglobal(this:GetName().."_Text"):SetText(VCB_COMMON_BUTTON_LOAD_TEXT)
+									</OnLoad>
+								</Scripts>
+							</Button>
+              -- LEFT_CURRENT_INBOX
+							<Frame name="VCB_BF_PM_FRAME_LEFT_CURRENT_INBOX">
+								<Size x="195" y="40" />
+								<Anchors>
+									<Anchor point="TOP" relativeTo="VCB_BF_PM_FRAME_LEFT_CURRENT" relativePoint="BOTTOM">
+										<Offset x="-15" y="15" />
+									</Anchor>
+								</Anchors>
+								<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+									<BackgroundInsets>
+										<AbsInset left="11" right="12" top="12" bottom="11" />
+									</BackgroundInsets>
+									<TileSize>
+										<AbsValue val="32" />
+									</TileSize>
+									<EdgeSize>
+										<AbsValue val="16" />
+									</EdgeSize>
+								</Backdrop>
+								<Layers>
+									<Layer>
+										<FontString name="$parent_TEXT" inherits="GameFontNormalSmall" text="">
+											<Size x="195" y="40" />
+											<Anchors>
+												<Anchor point="CENTER">
+													<Offset x="0" y="1" />
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+						</Frames>
+					</Frame>
+          -- PM Frame Right Body
+					<Frame name="VCB_BF_PM_FRAME_RIGHT">
+						<Size x="290" y="380" />
+						<Anchors>
+							<Anchor point="topLeft" relativeTo="VCB_BF_PM_FRAME_LEFT" relativePoint="topRIGHT">
+								<Offset x="0" y="0" />
+							</Anchor>
+						</Anchors>
+						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<BackgroundInsets>
+								<AbsInset left="5" right="5" top="5" bottom="5" />
+							</BackgroundInsets>
+							<TileSize>
+								<AbsValue val="32" />
+							</TileSize>
+							<EdgeSize>
+								<AbsValue val="16" />
+							</EdgeSize>
+						</Backdrop>
+						<Frames>
+							<ScrollFrame name="VCB_BF_PM_FRAME_RIGHT_SCROLLFRAME" inherits="FauxScrollFrameTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="0" y="-5" />
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="-30" y="8" />
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnVerticalScroll>
+										FauxScrollFrame_OnVerticalScroll(40, VCB_BF_PM_FRAME_RIGHT_SCROLLFRAME_Update) 
+									</OnVerticalScroll>
+									<OnShow>
+									</OnShow>
+							   </Scripts>
+							</ScrollFrame>
+              -- PM Frame Entry 1
+							<Button name="VCB_PM_ENTRY1" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="VCB_BF_PM_FRAME_RIGHT_SCROLLFRAME" relativePoint="TOPLEFT">
+									<Offset x="15" y="-15" />
+								</Anchor>
+							</Anchors>
+							<Layers>
+								<Layer>
+									<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+										<Size x="250" y="40" />
+										<Anchors>
+											<Anchor point="CENTER">
+												<Offset x="20" y="7" />
+											</Anchor>
+										</Anchors>
+									</FontString>
+								</Layer>
+							</Layers>
+						  </Button>
+              -- PM Frame Entry 2
+						  <Button name="VCB_PM_ENTRY2" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+							<Anchors>
+							  <Anchor point="TOPLEFT" relativeTo="VCB_PM_ENTRY1" relativePoint="BOTTOMLEFT" />
+							</Anchors>
+							<Layers>
+								<Layer>
+									<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+										<Size x="250" y="40" />
+										<Anchors>
+											<Anchor point="CENTER">
+												<Offset x="20" y="7" />
+											</Anchor>
+										</Anchors>
+									</FontString>
+								</Layer>
+							</Layers>
+						  </Button>
+              -- PM Frame Entry 3
+						  <Button name="VCB_PM_ENTRY3" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+							<Anchors>
+							  <Anchor point="TOPLEFT" relativeTo="VCB_PM_ENTRY2" relativePoint="BOTTOMLEFT" />
+							</Anchors>
+							<Layers>
+								<Layer>
+									<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+										<Size x="250" y="40" />
+										<Anchors>
+											<Anchor point="CENTER">
+												<Offset x="20" y="7" />
+											</Anchor>
+										</Anchors>
+									</FontString>
+								</Layer>
+							</Layers>
+						  </Button>
+              -- PM Frame Entry 4
+						  <Button name="VCB_PM_ENTRY4" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+							<Anchors>
+							  <Anchor point="TOPLEFT" relativeTo="VCB_PM_ENTRY3" relativePoint="BOTTOMLEFT" />
+							</Anchors>
+							<Layers>
+								<Layer>
+									<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+										<Size x="250" y="40" />
+										<Anchors>
+											<Anchor point="CENTER">
+												<Offset x="20" y="7" />
+											</Anchor>
+										</Anchors>
+									</FontString>
+								</Layer>
+							</Layers>
+						  </Button>
+              -- PM Frame Entry 5
+						  <Button name="VCB_PM_ENTRY5" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+							<Anchors>
+							  <Anchor point="TOPLEFT" relativeTo="VCB_PM_ENTRY4" relativePoint="BOTTOMLEFT" />
+							</Anchors>
+							<Layers>
+								<Layer>
+									<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+										<Size x="250" y="40" />
+										<Anchors>
+											<Anchor point="CENTER">
+												<Offset x="20" y="7" />
+											</Anchor>
+										</Anchors>
+									</FontString>
+								</Layer>
+							</Layers>
+						 </Button>
+              -- PM Frame Entry 6
+              <Button name="VCB_PM_ENTRY6" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+              <Anchors>
+                <Anchor point="TOPLEFT" relativeTo="VCB_PM_ENTRY5" relativePoint="BOTTOMLEFT" />
+              </Anchors>
+              <Layers>
+                <Layer>
+                <FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+                	<Size x="250" y="40" />
+                	<Anchors>
+                		<Anchor point="CENTER">
+                			<Offset x="20" y="7" />
+                		</Anchor>
+                	</Anchors>
+                </FontString>
+                </Layer>
+              </Layers>
+              </Button>
+              -- PM Frame Entry 7
+              <Button name="VCB_PM_ENTRY7" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+              <Anchors>
+                <Anchor point="TOPLEFT" relativeTo="VCB_PM_ENTRY6" relativePoint="BOTTOMLEFT" />
+              </Anchors>
+              <Layers>
+              	<Layer>
+              		<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+              			<Size x="250" y="40" />
+              			<Anchors>
+              				<Anchor point="CENTER">
+              					<Offset x="20" y="7" />
+              				</Anchor>
+              			</Anchors>
+              		</FontString>
+              	</Layer>
+              </Layers>
+              </Button>
+              -- PM Frame Entry 8
+              <Button name="VCB_PM_ENTRY8" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+              <Anchors>
+                <Anchor point="TOPLEFT" relativeTo="VCB_PM_ENTRY7" relativePoint="BOTTOMLEFT" />
+              </Anchors>
+              <Layers>
+              	<Layer>
+              		<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+              			<Size x="250" y="40" />
+              			<Anchors>
+              				<Anchor point="CENTER">
+              					<Offset x="20" y="7" />
+              				</Anchor>
+              			</Anchors>
+              		</FontString>
+              	</Layer>
+              </Layers>
+              </Button>
+              -- PM Frame Entry 9
+              <Button name="VCB_PM_ENTRY9" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+              <Anchors>
+                <Anchor point="TOPLEFT" relativeTo="VCB_PM_ENTRY8" relativePoint="BOTTOMLEFT" />
+              </Anchors>
+              <Layers>
+              	<Layer>
+              		<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+              			<Size x="250" y="40" />
+              			<Anchors>
+              				<Anchor point="CENTER">
+              					<Offset x="20" y="7" />
+              				</Anchor>
+              			</Anchors>
+              		</FontString>
+              	</Layer>
+              </Layers>
+              </Button>
+              -- PM Frame Entry 10
+              <Button name="VCB_PM_ENTRY10" inherits="VCB_PM_FRAME_ENTRY_TEMPLATE">
+              <Anchors>
+                <Anchor point="TOPLEFT" relativeTo="VCB_PM_ENTRY9" relativePoint="BOTTOMLEFT" />
+              </Anchors>
+              <Layers>
+              	<Layer>
+              		<FontString name="$parent_Text" inherits="GameFontNormalSmall" text="" justifyH="LEFT">
+              			<Size x="250" y="40" />
+              			<Anchors>
+              				<Anchor point="CENTER">
+              					<Offset x="20" y="7" />
+              				</Anchor>
+              			</Anchors>
+              		</FontString>
+              	</Layer>
+              </Layers>
+              </Button>
+						</Frames>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			-- MISC Frame
+			<Frame name="VCB_BF_MISC_FRAME" hidden="true">
+				<Size x="510" y="380" />
+				<Anchors>
+					<Anchor point="topLeft" relativeTo="VCB_BF_MENU_BODY" relativePoint="topRIGHT">
+						<Offset x="0" y="0" />
+					</Anchor>
+				</Anchors>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="32" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="16" />
+					</EdgeSize>
+				</Backdrop>
+        <Frames>
+          -- Checkbutton Disable Consolidate Mechanic
+          <CheckButton name="VCB_BF_MISC_FRAME_CHECKBUTTON1" inherits="VCB_BF_CheckTemplate">
+            <Size x="30" y="30" />
+            <Anchors>
+              <Anchor point="TOPLEFT" relativeTo="VCB_BF_MISC_FRAME" relativePoint="TOPLEFT">
+                <Offset x="10" y="-10" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_MISC_FRAME_TEXT_DISABLE_CF_TOOLTIP
+                getglobal("VCB_BF_MISC_FRAME_CHECKBUTTON1Text"):SetText(VCB_MISC_FRAME_TEXT_DISABLE_CF)
+              </OnLoad>
+              <OnClick>
+                VCB_BF_MISC_FRAME_DISABLE_CF()
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Checkbutton Disable Banning Mechanic
+          <CheckButton name="VCB_BF_MISC_FRAME_CHECKBUTTON2" inherits="VCB_BF_CheckTemplate">
+            <Size x="30" y="30" />
+            <Anchors>
+              <Anchor point="TOP" relativeTo="VCB_BF_MISC_FRAME_CHECKBUTTON1" relativePoint="BOTTOM">
+                <Offset x="0" y="0" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.tooltipText = VCB_MISC_FRAME_TEXT_DISABLE_BB_TOOLTIP
+                getglobal("VCB_BF_MISC_FRAME_CHECKBUTTON2Text"):SetText("Disable banning mechanic")
+              </OnLoad>
+              <OnClick>
+                VCB_BF_CHECKBUTTON("MISC_disable_BB")
+              </OnClick>
+            </Scripts>
+          </CheckButton>
+          -- Aura Theme Slider
+          <!-- 240630 quoted
+          <Slider name="VCB_BF_MISC_FRAME_ThemeSlider" inherits="VCB_BF_SliderTemplate">
+            <Size x="155" y="16" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_MISC_FRAME_CHECKBUTTON1" relativePoint="RIGHT">
+                <Offset x="175" y="-15" />
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnLoad>
+                this.aide = VCB_MISC_FRAME_TEXT_THEME_TOOLTIP
+                this:SetMinMaxValues(1,1)
+                this:SetValue(1)
+                this:SetValueStep(1)
+                getglobal("VCB_BF_MISC_FRAME_ThemeSliderText"):SetText(VCB_MISC_FRAME_TEXT_THEME)
+                getglobal("VCB_BF_MISC_FRAME_ThemeSliderLow"):SetText("1")
+                getglobal("VCB_BF_MISC_FRAME_ThemeSliderHigh"):SetText("1")
+              </OnLoad>
+              <OnValueChanged>
+                if VCB_IS_LOADED then
+                  VCB_BF_MISC_FRAME_ThemeSliderChange(this)
+                end
+              </OnValueChanged>
+            </Scripts>
+          </Slider>
+          <Button name="VCB_BF_MISC_FRAME_LOAD">
+            <Size x="155" y="40" />
+            <Anchors>
+              <Anchor point="LEFT" relativeTo="VCB_BF_MISC_FRAME_ThemeSlider" relativePoint="RIGHT">
+                <Offset x="30" y="-5" />
+              </Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <FontString name="$parent_Text" inherits="GameFontNormalSmall" text="Load">
+                  <Size x="190" y="40" />
+                  <Anchors>
+                    <Anchor point="CENTER">
+                      <Offset x="0" y="7" />
+                    </Anchor>
+                  </Anchors>
+                </FontString>
+              </Layer>
+            </Layers>
+            <NormalTexture file="Interface\Buttons\UI-DialogBox-Button-Up" />
+            <PushedTexture file="Interface\Buttons\UI-DialogBox-Button-Down" />
+            <HighlightTexture file="Interface\Buttons\UI-DialogBox-Button-Highlight" alphaMode="ADD" />
+            <Scripts>
+              <OnClick>
+                VCB_BF_MISC_FRAME_LOAD()
+              </OnClick>
+              <OnLoad>
+                getglobal(this:GetName().."_Text"):SetText(VCB_COMMON_BUTTON_LOAD_TEXT)
+              </OnLoad>
+            </Scripts>
+          </Button>
+          -->
+
+        </Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>
