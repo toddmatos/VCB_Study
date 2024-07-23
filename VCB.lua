@@ -294,7 +294,6 @@ function VCB_OnEvent(event)
       Consolidated_Buffs = {} 
     end
 
-
 		if Banned_Buffs == nil then
 			Banned_Buffs = {}
 		end
